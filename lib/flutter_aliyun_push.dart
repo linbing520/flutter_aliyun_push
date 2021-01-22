@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'push_message.dart';
 
@@ -9,6 +10,9 @@ typedef OnReceiveNotification = Function(PushNotification);
 class FlutterAliyunPush {
   static const MethodChannel _channel =
       const MethodChannel('aliyun_push');
+
+  static const EventChannel eventChannel = EventChannel("App/Event/Channel", const StandardMethodCodec());
+      
   static bool registCallback = false;
 
   static Function onRegistSuccess;
@@ -29,7 +33,10 @@ class FlutterAliyunPush {
     if(registCallback) {
       return;
     }
+    print("registCallHandler---------------");
     registCallback = true;
+
+
     _channel.setMethodCallHandler((call) {
       print("setMethodCallHandler:"+call.method);
       switch(call.method) {
@@ -47,7 +54,18 @@ class FlutterAliyunPush {
           if(onReceiveNotification != null) {
             var param = call.arguments;
             if(param != null) {
-              param = PushNotification.fromJson(json.decode(param));
+              if(Platform.isIOS) {
+                if(param['aps'] != null && param['aps']['alert'] != null) {
+                  var content = param['aps']['alert'];
+                  var title = content['title'];
+                  String body = content['body']; 
+                  param = PushNotification(title,body,param);
+                }
+
+
+              }else {
+                 param = PushNotification.fromJson(json.decode(param));
+              }
             }
             onReceiveNotification(param);
           }
@@ -63,7 +81,7 @@ class FlutterAliyunPush {
           break;
       }
     });
-    _channel.invokeMethod('initPush');
+    // _channel.invokeMethod('initPush');
   }
 
   static void  reigistOnRegistSuccess(Function callback) {

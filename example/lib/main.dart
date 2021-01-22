@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core' ;
 
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -21,6 +22,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    print("0000000000000000000000000000000"); 
     initPlatformState();
   }
 
@@ -30,17 +32,17 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await FlutterAliyunPush.platformVersion;
+      // platformVersion = await FlutterAliyunPush.platformVersion;
 //      await FlutterAliyunPush.initPush;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
 
-    FlutterAliyunPush.reigistOnRegistSuccess((msg){
-//      platformVersion = msg;
-//      setState(() {
-//        _platformVersion = platformVersion;
-//      });
+    FlutterAliyunPush.reigistOnRegistSuccess((msg){ 
+     platformVersion = 'reigistOnRegistSuccess';
+     setState(() {
+       _platformVersion = platformVersion;
+     });
     });
 
     FlutterAliyunPush.reigistOnReceiveNotification((msg){
