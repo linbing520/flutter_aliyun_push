@@ -81,7 +81,10 @@ class FlutterAliyunPush {
           break;
       }
     });
-    // _channel.invokeMethod('initPush');
+    //告诉原生已经有监听了
+    if(Platform.isAndroid) {
+      _channel.invokeMethod('listened');
+    }
   }
 
   static void  reigistOnRegistSuccess(Function callback) {

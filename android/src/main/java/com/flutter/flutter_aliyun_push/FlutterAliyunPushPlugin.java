@@ -44,7 +44,7 @@ public class FlutterAliyunPushPlugin implements FlutterPlugin, MethodChannel.Met
   private static String lastPushRegistSuccessMessage;
   private static String lastPushRegistErrorMessage;
   public static boolean isPluginAttached; //插件是否被加载到flutter
-  public static boolean isFlutterInvokeInitPush; //flutter是否调用了初始化方法，用来判断flutter是否已经添加了method监听
+  public static boolean isFlutterHasListened; //flutter是否已经添加了method监听,没有监听，来消息时，将会放入缓存队列
   private static List<FlutterPushNotification> cachedNotifications = new ArrayList<FlutterPushNotification>(); //未传到dart的消息
   private static List<FlutterPushMessage> cachedMessages = new ArrayList<FlutterPushMessage>(); //未传到dart的消息
 
@@ -77,7 +77,7 @@ public class FlutterAliyunPushPlugin implements FlutterPlugin, MethodChannel.Met
 
 
   public static void sendPushNotification(Context context,FlutterPushNotification message) {
-    if(FlutterAliyunPushPlugin.isFlutterInvokeInitPush) {
+    if(FlutterAliyunPushPlugin.isFlutterHasListened) {
       EventBus.getDefault().post(new PushMessageEvent(PushMessageEvent.EVENT_onReceiverNotification,message));
     }else {
       Log.d(FlutterAliyunPushPlugin.TAG, "notification recevie not plugin not attach");
@@ -86,7 +86,7 @@ public class FlutterAliyunPushPlugin implements FlutterPlugin, MethodChannel.Met
   }
 
   public static void sendPushMessage(Context context,FlutterPushMessage message) {
-    if(FlutterAliyunPushPlugin.isFlutterInvokeInitPush) {
+    if(FlutterAliyunPushPlugin.isFlutterHasListened) {
       EventBus.getDefault().post(new PushMessageEvent(PushMessageEvent.EVENT_onReceiverMessage,message));
     }else {
       Log.d(FlutterAliyunPushPlugin.TAG, "message recevie not plugin not attach");
@@ -265,7 +265,7 @@ public class FlutterAliyunPushPlugin implements FlutterPlugin, MethodChannel.Met
   }
 
   private void dealCacheEvent() {
-    if(!FlutterAliyunPushPlugin.isFlutterInvokeInitPush) {
+    if(!FlutterAliyunPushPlugin.isFlutterHasListened) {
       //等待，直到dart有监听了执行
       new Handler().postDelayed(new Runnable() {
         @Override
@@ -317,8 +317,8 @@ public class FlutterAliyunPushPlugin implements FlutterPlugin, MethodChannel.Met
       if (method.equals("getPlatformVersion")) {
         // This message is sent when the Dart side of this plugin is told to initialize.
         result.success("Android " + android.os.Build.VERSION.RELEASE);
-      }else if(method.equals("initPush")) {
-        isFlutterInvokeInitPush = true;
+      }else if(method.equals("listened")) {
+        isFlutterHasListened = true;
       }
       else {
         result.notImplemented();
