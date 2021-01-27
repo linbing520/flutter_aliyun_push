@@ -4,12 +4,16 @@
 <br/>
 使用步骤：<br/>
 dart：<br/>
-1.添加注册成功监听
+1.pubspec.yaml添加依赖
+  flutter_aliyun_push: ^0.0.1 <br/>
+  版本改成最新版本
+
+2.添加注册成功监听
    
         FlutterAliyunPush.reigistOnRegistSuccess((msg){ 
         });
 
-2.添加收到通知监听
+3.添加收到通知监听
 
      FlutterAliyunPush.reigistOnReceiveNotification((msg){
         var test = json.encode(msg.toJson());
@@ -17,7 +21,7 @@ dart：<br/>
 
 
 
-3.添加收到消息监听
+4.添加收到消息监听
 
      FlutterAliyunPush.reigistOnReceiveMessage((msg){
         var test = json.encode(msg.toJson());
