@@ -33,7 +33,7 @@
 
     String title;
     String summary;
-    Map<String, dynamic> extraMap;
+    Map<dynamic, dynamic> extraMap;
 
     PushNotification(this.title,this.summary,this.extraMap);
 
