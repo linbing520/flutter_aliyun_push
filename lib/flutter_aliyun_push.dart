@@ -6,6 +6,7 @@ import 'push_message.dart';
 
 typedef OnReceiveMessage = Function(PushMessage);
 typedef OnReceiveNotification = Function(PushNotification);
+typedef ApiCallback = Function(bool,Object);
 
 class FlutterAliyunPush {
   static const MethodChannel _channel =
@@ -107,6 +108,85 @@ class FlutterAliyunPush {
     onReceiveMessage = callback;
     registCallHandler();
   }
+
+
+
+  //api 相关接口
+  //绑定账号
+  static void bindAccount(String account, ApiCallback callback) {
+    _channel.invokeMethod("bindAccount",account).then((value) => {
+      callback(true,value)
+    }).catchError((e)=>{
+      callback(false,e)
+    });
+  }
+
+  //解绑账号
+  static void unbindAccount(ApiCallback callback) {
+    _channel.invokeMethod("unbindAccount").then((value) => {
+      callback(true,value)
+    }).catchError((e)=>{
+      callback(false,e)
+    });
+  }
+
+  //绑定标签
+  static void bindTag(int target,  List<String> tags, String alias, ApiCallback callback) {
+    var params = {target:target,tags:tags,alias:alias};
+    _channel.invokeMethod("bindTag",params).then((value) => {
+      callback(true,value)
+    }).catchError((e)=>{
+      callback(false,e)
+    });
+  }
+
+  //解绑标签
+  static void unbindTag(int target,  List<String> tags, String alias, ApiCallback callback) {
+    var params = {target:target,tags:tags,alias:alias};
+    _channel.invokeMethod("unbindTag",params).then((value) => {
+      callback(true,value)
+    }).catchError((e)=>{
+      callback(false,e)
+    });
+  }
+
+  //查询标签
+  static void listTags(int target, ApiCallback callback) {
+    _channel.invokeMethod("listTags",target).then((value) => {
+      callback(true,value)
+    }).catchError((e)=>{
+      callback(false,e)
+    });
+  }
+
+
+  //添加别名
+  static void addAlias(String alias, ApiCallback callback) {
+    _channel.invokeMethod("addAlias",alias).then((value) => {
+      callback(true,value)
+    }).catchError((e)=>{
+      callback(false,e)
+    });
+  }
+
+  //删除设备别名。
+  static void removeAlias(String alias, ApiCallback callback) {
+    _channel.invokeMethod("removeAlias",alias).then((value) => {
+      callback(true,value)
+    }).catchError((e)=>{
+      callback(false,e)
+    });
+  }
+
+    //查询设备别名
+    static void listAliases(ApiCallback callback) {
+      _channel.invokeMethod("listAliases").then((value) => {
+        callback(true,value)
+      }).catchError((e)=>{
+        callback(false,e)
+      });
+    }
+
 }
 
 

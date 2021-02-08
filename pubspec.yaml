@@ -1,6 +1,6 @@
 ﻿name: flutter_aliyun_push
 description: flutter 阿里云推送，安卓支持厂商推送
-version: 0.0.3
+version: 1.0.0
 homepage: https://github.com/linbing520/flutter_aliyun_push
 
 environment:

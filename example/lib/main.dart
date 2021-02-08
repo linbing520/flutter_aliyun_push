@@ -43,6 +43,11 @@ class _MyAppState extends State<MyApp> {
      setState(() {
        _platformVersion = platformVersion;
      });
+     FlutterAliyunPush.bindAccount("test11111", (success,result) => {
+       setState(() {
+         _platformVersion = success as String;
+       })
+     });
     });
 
     FlutterAliyunPush.reigistOnReceiveNotification((msg){
@@ -67,6 +72,8 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _platformVersion = platformVersion;
     });
+
+
   }
 
   @override

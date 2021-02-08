@@ -26,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -312,13 +313,25 @@ public class FlutterAliyunPushPlugin implements FlutterPlugin, MethodChannel.Met
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     Log.i(TAG, "onMethodCall:"+call.method);
     String method = call.method;
-    Object arguments = call.arguments;
     try {
-      if (method.equals("getPlatformVersion")) {
-        // This message is sent when the Dart side of this plugin is told to initialize.
-        result.success("Android " + android.os.Build.VERSION.RELEASE);
-      }else if(method.equals("listened")) {
+      if(method.equals("listened")) {
         isFlutterHasListened = true;
+      }else if(method.equals("bindAccount")) {
+        bindAccount(call,result);
+      }else if(method.equals("unbindAccount")) {
+        unbindAccount(call,result);
+      }else if(method.equals("bindTag")) {
+        bindTag(call,result);
+      }else if(method.equals("unbindTag")) {
+        unbindTag(call,result);
+      }else if(method.equals("listTags")) {
+        listTags(call,result);
+      }else if(method.equals("addAlias")) {
+        addAlias(call,result);
+      }else if(method.equals("removeAlias")) {
+        removeAlias(call,result);
+      }else if(method.equals("listAliases")) {
+        listAliases(call,result);
       }
       else {
         result.notImplemented();
@@ -328,5 +341,143 @@ public class FlutterAliyunPushPlugin implements FlutterPlugin, MethodChannel.Met
     }
   }
 
+  public void bindAccount(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    Map arguments = call.arguments();
+    String account = (String) arguments.get("account");
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.bindAccount(account, new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
 
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
+
+  public void unbindAccount(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.unbindAccount(new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
+
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
+
+  public void bindTag(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    Map arguments = call.arguments();
+    Map params = (Map) arguments.get("params");
+    int target = (int) params.get("target");
+    List<String> tags = (List<String>) params.get("tags");
+    String alias = (String) params.get("alias");
+
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.bindTag(target, (String[]) tags.toArray(),alias,new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
+
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
+
+  public void unbindTag(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    Map arguments = call.arguments();
+    Map params = (Map) arguments.get("params");
+    int target = (int) params.get("target");
+    List<String> tags = (List<String>) params.get("tags");
+    String alias = (String) params.get("alias");
+
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.unbindTag(target, (String[]) tags.toArray(),alias,new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
+
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
+
+  public void listTags(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    Map arguments = call.arguments();
+    int target = (int) arguments.get("target");
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.listTags(target, new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
+
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
+
+  public void addAlias(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    Map arguments = call.arguments();
+    String alias = (String) arguments.get("alias");
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.addAlias(alias, new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
+
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
+
+  public void removeAlias(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    Map arguments = call.arguments();
+    String alias = (String) arguments.get("alias");
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.removeAlias(alias, new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
+
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
+
+  public void listAliases(@NonNull MethodCall call, @NonNull final MethodChannel.Result result) {
+    CloudPushService pushService = PushServiceFactory.getCloudPushService();
+    pushService.listAliases(new CommonCallback() {
+      @Override
+      public void onSuccess(String s) {
+        result.success(s);
+      }
+
+      @Override
+      public void onFailed(String errorCode, String errorMsg) {
+        result.error(errorCode,errorMsg,null);
+      }
+    });
+  }
 }
